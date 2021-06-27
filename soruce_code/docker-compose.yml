@@ -1,0 +1,40 @@
+version: '2.3'
+
+services:
+  main:
+    container_name: "nsfw-retrieval"
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    runtime: nvidia
+    restart: always
+    environment:
+      - PYTHONPATH=/workspace
+    volumes:
+      - type: volume
+        source: nfs_shared
+        target: /mldisk/nfs_shared
+        volume:
+          nocopy: true
+      - type: volume
+        source: nfs_shared_
+        target: /mldisk/nfs_shared_
+        volume:
+          nocopy: true
+    ports:
+      - "0000:22"
+    ipc: host
+    stdin_open: true
+    tty: true
+
+volumes:
+  nfs_shared:
+    driver_opts:
+      type: "nfs"
+      o: "addr="
+      device: ":/volume2/nfs_shared"
+  nfs_shared_:
+    driver_opts:
+      type: "nfs"
+      o: "addr="
+      device: ":/volume3/nfs_shared_"
